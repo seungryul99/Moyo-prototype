@@ -1,0 +1,28 @@
+spring:
+
+  # MySQL
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: create
+
+  # Redis
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PASSWORD}
+
+  # JWT
+  secret: ${JWT_SECRET_KEY}
+
+# Log
+logging:
+  level:
+    root: info
