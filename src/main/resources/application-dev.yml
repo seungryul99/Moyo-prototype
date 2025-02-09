@@ -20,7 +20,8 @@ spring:
       password: ${REDIS_PASSWORD}
 
   # JWT
-  secret: ${JWT_SECRET_KEY}
+  jwt:
+    secret: ${JWT_SECRET_KEY}
 
 
   # Security
@@ -34,7 +35,7 @@ spring:
             client-secret : ${CLIENT_SECRET}
             scope:
               - read:user
-              - user:follow
+#              - user:follow
 # Log
 logging:
   level:
