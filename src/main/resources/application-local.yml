@@ -22,6 +22,19 @@ spring:
   # JWT
   secret: ${JWT_SECRET_KEY}
 
+
+  # Security
+
+  security:
+    oauth2:
+      client:
+        registration:
+          github:
+            client-id: ${CLIENT_ID}
+            client-secret : ${CLIENT_SECRET}
+            scope:
+              - read:user
+              - user:follow
 # Log
 logging:
   level:

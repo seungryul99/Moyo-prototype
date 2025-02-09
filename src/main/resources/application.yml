@@ -3,3 +3,15 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+# Logging
+logging:
+  level:
+    org.springframework.security: debug
+
+# Monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: beans

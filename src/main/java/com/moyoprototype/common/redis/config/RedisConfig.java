@@ -1,4 +1,4 @@
-package com.moyoprototype.common.redis;
+package com.moyoprototype.common.redis.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
