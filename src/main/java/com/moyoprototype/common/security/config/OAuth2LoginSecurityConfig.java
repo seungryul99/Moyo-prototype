@@ -1,25 +1,66 @@
 package com.moyoprototype.common.security.config;
 
+import com.moyoprototype.jwt.JwtExceptionHandleFilter;
+import com.moyoprototype.jwt.JwtValidationFilter;
+import com.moyoprototype.oauth.GithubLoginSuccessHandler;
+import com.moyoprototype.oauth.GithubOAuth2UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class OAuth2LoginSecurityConfig {
+
+    private final GithubOAuth2UserService githubOAuth2UserService;
+    private final GithubLoginSuccessHandler githubLoginSuccessHandler;
+    private final JwtValidationFilter jwtValidationFilter;
+    private final JwtExceptionHandleFilter jwtExceptionHandleFilter;
+
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
+        configuration.setAllowedMethods(List.of("GET","POST","PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setExposedHeaders(List.of(HttpHeaders.CONTENT_TYPE, HttpHeaders.AUTHORIZATION));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/actuator/*").permitAll()
-                        .anyRequest().authenticated()
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/reissue/token").permitAll()
+                        .anyRequest().authenticated()
+                ).addFilterBefore(jwtExceptionHandleFilter, OAuth2LoginAuthenticationFilter.class)
+                .addFilterBefore(jwtValidationFilter, OAuth2LoginAuthenticationFilter.class)
 
                 /**
                  *    [초기 구현 계획]
@@ -47,7 +88,7 @@ public class OAuth2LoginSecurityConfig {
                         .authorizationEndpoint(authorization -> authorization
 //
 //                                // 사용자가 로그인 하기 버튼을 누르면 해당 경로로 들어와서 LoginRedirectFilter 동작 커스텀, registrationId 전까지가 Uri임 /github 안붙여야됨
-                                .baseUri("/users/login")
+                                .baseUri("/api/users/login")
 //
 //                                // 보통 csrf 공격 방어등을 위해서 요청을 서버 세션에 저장해두고 state = 랜덤 UUID 같은 걸 붙여서 관리함
 //                                // 추후 요청이 돌아오면 해당 state 값과 비교하는데 여기서도 다중 서버 세션 불일치 문제가 발생할 수 있음.
@@ -67,7 +108,7 @@ public class OAuth2LoginSecurityConfig {
 
 
                         // Access Token 교환을 담당하는 클라이언트를 커스터 마이징
-                        // ex) 기존의 RestOperations에서 RestTemplate를 사용하는 방식이 마음에 안든다? 
+                        // ex) 기존의 RestOperations에서 RestTemplate를 사용하는 방식이 마음에 안든다?
                         // 내가 직접 만들어서 RestClient로 교체 가능, 하지만 이미 RestClientAuthorizationCodeTokenResponseClient라는 걸 시큐리티에서 만들어서
                         // 적용했음.
 //                        .tokenEndpoint(token -> token
@@ -81,11 +122,14 @@ public class OAuth2LoginSecurityConfig {
                                    // 이를 ROLE_USER로 변환하는 로직을 구현할 수 있음.
 //                                .userAuthoritiesMapper(this.userAuthoritiesMapper())
                                    // 사용자가 정보 받아온 후 실행할 서비스
-                                .userService()
+                                .userService(githubOAuth2UserService)
 //                                .oidcUserService(this.oidcUserService())
                         )
-                                .successHandler()
-                );
+                                .successHandler(githubLoginSuccessHandler)
+                )
+                .cors((cors -> cors.configurationSource(corsConfigurationSource())))
+
+        ;
         return http.build();
     }
 }

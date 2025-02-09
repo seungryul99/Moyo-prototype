@@ -8,10 +8,3 @@ decorator:
 logging:
   level:
     org.springframework.security: debug
-
-# Monitoring
-management:
-  endpoints:
-    web:
-      exposure:
-        include: beans
