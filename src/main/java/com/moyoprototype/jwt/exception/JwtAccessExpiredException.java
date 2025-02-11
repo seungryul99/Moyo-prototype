@@ -1,5 +1,4 @@
-package com.moyoprototype.jwt;
+package com.moyoprototype.jwt.exception;
 
 public class JwtAccessExpiredException extends RuntimeException{
-
 }

@@ -1,6 +1,6 @@
 package com.moyoprototype.common.redis.repository;
 
-import com.moyoprototype.jwt.JwtPayloadReader;
+import com.moyoprototype.jwt.util.JwtPayloadReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.TimeUnit;
 
+// 임시로 돌아가게만 만들어둠
 @Repository
 @RequiredArgsConstructor
 public class RedisRepositoryImpl implements RedisRepository{

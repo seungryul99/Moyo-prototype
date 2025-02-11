@@ -1,5 +1,7 @@
-package com.moyoprototype.jwt;
+package com.moyoprototype.jwt.filter;
 
+import com.moyoprototype.jwt.util.JwtPayloadReader;
+import com.moyoprototype.jwt.util.JwtValidator;
 import com.moyoprototype.oauth.GithubOAuth2User;
 import com.moyoprototype.oauth.GithubOAuth2UserService;
 import jakarta.servlet.FilterChain;
@@ -53,7 +55,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
 
         // 추출한 jwt AccessToken JWT Validator로 검증
         jwtValidator.validateJwtAccessToken(accessToken);
-
 
         String userAppId = jwtPayloadReader.getUserAppId(accessToken);
         GithubOAuth2User userDetails = userService.loadGithubUser(userAppId);

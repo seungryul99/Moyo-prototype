@@ -35,8 +35,9 @@ public class GithubOAuth2UserService extends DefaultOAuth2UserService {
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
 
-        Map<String, Object> oAuth2UserAttribute = checkDefaultOAuth2UserAttribute(userRequest, oAuth2User);
-        Map<String, Object> githubUserAttribute = convertAndCheckGithubUser(oAuth2UserAttribute);
+        // 체크용
+        // Map<String, Object> oAuth2UserAttribute = checkDefaultOAuth2UserAttribute(userRequest, oAuth2User);
+        Map<String, Object> githubUserAttribute = convertAndCheckGithubUser(oAuth2User.getAttributes());
 
         User user = userRepository.findByAppId((String) githubUserAttribute.get("appId"));
 

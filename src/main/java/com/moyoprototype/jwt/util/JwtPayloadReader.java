@@ -1,4 +1,4 @@
-package com.moyoprototype.jwt;
+package com.moyoprototype.jwt.util;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +23,7 @@ public class JwtPayloadReader {
     }
 
     public String getUserAppId(String token) {
-        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("memberAppId", String.class);
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("userAppId", String.class);
     }
 
     public String getUserRole(String token){

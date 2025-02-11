@@ -1,7 +1,7 @@
 package com.moyoprototype.oauth;
 
 import com.moyoprototype.common.redis.repository.RedisRepository;
-import com.moyoprototype.jwt.JwtProvider;
+import com.moyoprototype.jwt.util.JwtProvider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,14 +30,15 @@ public class GithubLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         log.info("로그인 성공 후 JWT 발급 시작");
         GithubOAuth2User gitHubOAuth2User = (GithubOAuth2User) authentication.getPrincipal();
 
-        String memberAppId = gitHubOAuth2User.getName();
+        String userAppId = gitHubOAuth2User.getAppId();
 
-        String jwtRefresh = jwtProvider.createJwtRefresh(memberAppId);
+        String jwtRefresh = jwtProvider.createJwtRefresh(userAppId);
 
         Cookie jwtRefreshCookie = new Cookie("jwtRefresh",jwtRefresh);
         jwtRefreshCookie.setMaxAge(JWT_REFRESH_EXPIRES_MS/1000);
         jwtRefreshCookie.setPath("/");
         jwtRefreshCookie.setHttpOnly(true);
+        jwtRefreshCookie.setSecure(true);
 
         redisRepository.save(gitHubOAuth2User.getAppId(), jwtRefresh);
 

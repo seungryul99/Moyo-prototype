@@ -1,4 +1,4 @@
-package com.moyoprototype.jwt;
+package com.moyoprototype.jwt.util;
 
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +21,10 @@ public class JwtProvider {
         this.secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
     }
 
-    public String createJwtAccess(String memberAppId) {
+    public String createJwtAccess(String userAppId) {
         return Jwts.builder()
                 .claim("tokenType", "jwt_access")
-                .claim("memberAppId", memberAppId)
+                .claim("userAppId", userAppId)
                 .claim("role", "ROLE_USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JWT_ACCESS_EXPIRES_MS))
@@ -32,10 +32,10 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createJwtRefresh(String memberAppId) {
+    public String createJwtRefresh(String userAppId) {
         return Jwts.builder()
                 .claim("tokenType", "jwt_refresh")
-                .claim("memberAppId", memberAppId)
+                .claim("userAppId", userAppId)
                 .claim("role", "ROLE_USER")
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + JWT_REFRESH_EXPIRES_MS))

@@ -1,13 +1,12 @@
 package com.moyoprototype.common.security.config;
 
-import com.moyoprototype.jwt.JwtExceptionHandleFilter;
-import com.moyoprototype.jwt.JwtValidationFilter;
+import com.moyoprototype.jwt.filter.JwtExceptionHandleFilter;
+import com.moyoprototype.jwt.filter.JwtValidationFilter;
 import com.moyoprototype.oauth.GithubLoginSuccessHandler;
 import com.moyoprototype.oauth.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,14 +30,13 @@ public class OAuth2LoginSecurityConfig {
     private final JwtValidationFilter jwtValidationFilter;
     private final JwtExceptionHandleFilter jwtExceptionHandleFilter;
 
-
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET","POST","PATCH", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET","POST","PATCH","DELETE","OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setExposedHeaders(List.of(HttpHeaders.CONTENT_TYPE, HttpHeaders.AUTHORIZATION));
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -64,10 +62,10 @@ public class OAuth2LoginSecurityConfig {
 
                 /**
                  *    [초기 구현 계획]
-                 *    무조건 단일 서버 기준 세션사용 로그인으로 구현할 생각임.
+                 *    무조건 단일 서버 기준 세션 + 메모리 + 토큰 함께 사용 로그인으로 구현할 생각임.
                  *
                  *    1. OAuth2Login API 사용
-                 *    2. API 서버의 클라이언트(프론트)에게 노출되는 로그인 버튼 클릭시 uri만 커스텀 할 생각임. code 전달되는 경로는 커스터마이징 하지 않음
+                 *    2. API 서버의 클라이언트(프론트)에게 노출되는 로그인 버튼 클릭시 uri만 커스텀 할 생각임. code 전달 경로는 커스터마이징 하지 않음
                  *    3. Access 교환시 현재 버전의 시큐리티가 RestTemplate를 사용하는지 RestClient를 사용하는지 관찰 후 RestTemplate를 사용하면 이를 커스터마이징 할 생각
                  *    4. 우선은 OIDC없이 구현할 예정 이라 UserService만 커스터마이징 할 예정임.
                  *    5. 우선은 failHandler는 구현하지 않음.

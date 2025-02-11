@@ -1,5 +1,6 @@
-package com.moyoprototype.jwt;
+package com.moyoprototype.jwt.filter;
 
+import com.moyoprototype.jwt.exception.JwtAccessExpiredException;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,9 +25,9 @@ public class JwtExceptionHandleFilter extends OncePerRequestFilter {
         } catch (JwtAccessExpiredException e) {
             log.error("JWT Access 만료 예외 발생 ");
 
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(401);
             response.setContentType("application/json");
-            String errorResponse = "{\"error\": \"ACCESS_EXPIRE\"}";
+            String errorResponse = "{\"code\": \"LOGIN_401_1\"}";
             response.getWriter().write(errorResponse);
         }
     }
