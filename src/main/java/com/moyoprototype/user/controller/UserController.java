@@ -2,6 +2,7 @@ package com.moyoprototype.user.controller;
 
 import com.moyoprototype.oauth.GithubOAuth2User;
 import com.moyoprototype.user.service.JwtReIssueService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -22,7 +20,14 @@ import static com.moyoprototype.common.constant.MoyoPrototypeConstants.GITHUB_RE
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class UserController {
+
+    @GetMapping("/health")
+    public ResponseEntity<?> healthCheck(){
+
+        return ResponseEntity.ok("hello");
+    }
 
 //    private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
     private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
