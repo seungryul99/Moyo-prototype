@@ -47,6 +47,7 @@ jobs:
           script: |
             rm -rf /home/ubuntu/moyo-test/current
             mkdir /home/ubuntu/moyo-test/current
+            mv /home/ubuntu/moyo-test/tobe/project.jar /home/ubuntu/moyo-test/current/project.jar
             cd /home/ubuntu/moyo-test/current
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar project.jar --spring.profiles.active=dev > output.log 2>&1 &
