@@ -26,6 +26,7 @@ public class UserController {
     @GetMapping("/health")
     public ResponseEntity<?> healthCheck(){
 
+        log.info("헬스 체크 실행");
         return ResponseEntity.ok("hello");
     }
 
@@ -35,6 +36,8 @@ public class UserController {
 
     @GetMapping("/auth/test")
     public String test(){
+
+        log.info("인증 테스트 실행");
 
 //        log.info("===== default OAuth2AuthorizedClientRepository 구현체 조회 =====");
 //        log.info(String.valueOf(oAuth2AuthorizedClientRepository.getClass()));
