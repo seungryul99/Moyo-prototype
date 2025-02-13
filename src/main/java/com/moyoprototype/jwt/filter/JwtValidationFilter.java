@@ -31,8 +31,6 @@ public class JwtValidationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        // Request Authorization 헤더에서 "토큰타입 + 토큰" 추출
-        String authorizationHeader = request.getHeader("Authorization");
 
         String requestURI = request.getRequestURI();
         if (!requestURI.startsWith("/api/auth")){
@@ -41,6 +39,9 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         }
 
         log.info("JWT가 필요한 요청");
+
+        // Request Authorization 헤더에서 "토큰타입 + 토큰" 추출
+        String authorizationHeader = request.getHeader("Authorization");
 
         // JWT가 필요한 요청인데 Authorization Header에 아무 값이 존재하지 않는 경우 예외 처리
         if(authorizationHeader == null){
