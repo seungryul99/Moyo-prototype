@@ -33,17 +33,9 @@ public class GithubLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String userAppId = gitHubOAuth2User.getAppId();
 
         String jwtRefresh = jwtProvider.createJwtRefresh(userAppId);
-
-        Cookie jwtRefreshCookie = new Cookie("jwtRefresh",jwtRefresh);
-        jwtRefreshCookie.setMaxAge(JWT_REFRESH_EXPIRES_MS/1000);
-        jwtRefreshCookie.setPath("/");
-        jwtRefreshCookie.setHttpOnly(true);
-        jwtRefreshCookie.setSecure(true);
-        jwtRefreshCookie.setDomain("localhost");
-
         redisRepository.save(gitHubOAuth2User.getAppId(), jwtRefresh);
 
-        response.addCookie(jwtRefreshCookie);
+        response.addHeader("Set-Cookie", "jwtRefresh=" + jwtRefresh + "; Domain=cafehub.site; Secure; SameSite=None; HttpOnly; Path=/; Max-Age=600");
         response.sendRedirect("http://localhost:3000/test");
     }
 
