@@ -72,6 +72,7 @@ public class UserController {
         Map<String, String> reIssueTokens = jwtReIssueService.reIssueJwt(jwtRefreshToken);
 
         return ResponseEntity.status(200)
+
                 .header("Authorization", "Bearer " + reIssueTokens.get("access"))
                 .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Path=/; Max-Age=600; SameSite=Lax; Domain=.cafehub.site; HttpOnly; Secure;")
                 .build();
