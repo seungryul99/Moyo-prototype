@@ -67,6 +67,8 @@ public class UserController {
     @PostMapping("/reissue/token")
     public ResponseEntity<Void> reissueJwtTokens(@CookieValue("jwtRefresh") String jwtRefreshToken){
 
+        log.info("토큰 까봄 : {}", jwtRefreshToken.substring(0,6));
+
         Map<String, String> reIssueTokens = jwtReIssueService.reIssueJwt(jwtRefreshToken);
 
         return ResponseEntity.status(200)

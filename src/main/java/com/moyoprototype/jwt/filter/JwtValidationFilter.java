@@ -35,7 +35,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
 
         String requestURI = request.getRequestURI();
-        if (!requestURI.startsWith("/auth")){
+        if (!requestURI.startsWith("/api/auth")){
             filterChain.doFilter(request,response);
             return;
         }
