@@ -7,12 +7,16 @@ import com.moyoprototype.oauth.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -29,6 +33,7 @@ public class OAuth2LoginSecurityConfig {
     private final GithubLoginSuccessHandler githubLoginSuccessHandler;
     private final JwtValidationFilter jwtValidationFilter;
     private final JwtExceptionHandleFilter jwtExceptionHandleFilter;
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -55,11 +60,10 @@ public class OAuth2LoginSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/api/auth/test").authenticated()
-//                        .requestMatchers("/api/refresh/token","/api/health","/error/**").permitAll()
-                        .anyRequest().permitAll()
-                ).addFilterBefore(jwtExceptionHandleFilter, OAuth2LoginAuthenticationFilter.class)
-                .addFilterBefore(jwtValidationFilter, OAuth2LoginAuthenticationFilter.class)
+                        .requestMatchers("/api/reissue/token","/api/health","/error/**").permitAll()
+                        .anyRequest().authenticated()
+                ).addFilterBefore(jwtExceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
 
                 /**
                  *    [초기 구현 계획]

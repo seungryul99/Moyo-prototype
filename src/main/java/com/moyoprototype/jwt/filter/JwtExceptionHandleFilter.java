@@ -20,6 +20,7 @@ public class JwtExceptionHandleFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         try {
             filterChain.doFilter(request, response);
         } catch (JwtAccessExpiredException e) {
@@ -31,5 +32,7 @@ public class JwtExceptionHandleFilter extends OncePerRequestFilter {
             response.getWriter().write(errorResponse);
         }
     }
+
+
 }
 
