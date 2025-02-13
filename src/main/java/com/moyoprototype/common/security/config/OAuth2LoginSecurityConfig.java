@@ -33,7 +33,7 @@ public class OAuth2LoginSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://cafehub.site"));
+        configuration.setAllowedOrigins(List.of("https://cafehub.site:3000"));
         configuration.setAllowedMethods(List.of("GET","POST","PATCH","DELETE","OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
