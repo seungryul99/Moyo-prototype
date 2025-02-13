@@ -39,7 +39,7 @@ public class GithubLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         jwtRefreshCookie.setPath("/");
         jwtRefreshCookie.setHttpOnly(true);
         jwtRefreshCookie.setSecure(true);
-        jwtRefreshCookie.setDomain("cafehub.site");
+        jwtRefreshCookie.setDomain("localhost");
 
         redisRepository.save(gitHubOAuth2User.getAppId(), jwtRefresh);
 
