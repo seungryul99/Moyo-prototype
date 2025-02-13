@@ -73,7 +73,7 @@ public class UserController {
 
         return ResponseEntity.status(200)
                 .header("Authorization", "Bearer " + reIssueTokens.get("access"))
-                .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Domain=localhost; Secure; SameSite=None; HttpOnly; Path=/; Max-Age=600")
+                .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Path=/; Max-Age=600; SameSite=None; HttpOnly; Secure;")
                 .build();
     }
 

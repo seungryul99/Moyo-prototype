@@ -35,7 +35,7 @@ public class GithubLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String jwtRefresh = jwtProvider.createJwtRefresh(userAppId);
         redisRepository.save(gitHubOAuth2User.getAppId(), jwtRefresh);
 
-        response.addHeader("Set-Cookie", "jwtRefresh=" + jwtRefresh + "; Domain=localhost; Secure; SameSite=None; HttpOnly; Path=/; Max-Age=600");
+        response.addHeader("Set-Cookie", "jwtRefresh=" + jwtRefresh + "; Path=/; Max-Age=600; SameSite=None; HttpOnly; Secure;");
         response.sendRedirect("http://localhost:3000/test");
     }
 
