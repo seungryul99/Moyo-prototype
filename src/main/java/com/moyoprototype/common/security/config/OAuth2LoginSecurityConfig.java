@@ -33,7 +33,7 @@ public class OAuth2LoginSecurityConfig {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://cafehub.site:3000"));
+        configuration.setAllowedOrigins(List.of("https://www.cafehub.site"));
         configuration.setAllowedMethods(List.of("GET","POST","PATCH","DELETE","OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
@@ -55,7 +55,7 @@ public class OAuth2LoginSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/reissue/token","/api/health").permitAll()
+                        .requestMatchers("/api/refresh/token","/api/health").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtExceptionHandleFilter, OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(jwtValidationFilter, OAuth2LoginAuthenticationFilter.class)
