@@ -2,6 +2,7 @@ package com.moyoprototype.common.security.config;
 
 import com.moyoprototype.jwt.filter.JwtExceptionHandleFilter;
 import com.moyoprototype.jwt.filter.JwtValidationFilter;
+import com.moyoprototype.jwt.filter.ServerLoadBalancingLoggingFilter;
 import com.moyoprototype.oauth.GithubLoginSuccessHandler;
 import com.moyoprototype.oauth.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,7 @@ public class OAuth2LoginSecurityConfig {
     private final GithubLoginSuccessHandler githubLoginSuccessHandler;
     private final JwtValidationFilter jwtValidationFilter;
     private final JwtExceptionHandleFilter jwtExceptionHandleFilter;
+    private final ServerLoadBalancingLoggingFilter serverLoadBalancingLoggingFilter;
 
 
     @Bean
@@ -64,6 +66,7 @@ public class OAuth2LoginSecurityConfig {
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtExceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(serverLoadBalancingLoggingFilter, jwtExceptionHandleFilter.getClass())
 
                 /**
                  *    [초기 구현 계획]
