@@ -31,7 +31,7 @@ public class UserController {
         return ResponseEntity.ok("hello");
     }
 
-//    private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
+    private final OAuth2AuthorizedClientRepository oAuth2AuthorizedClientRepository;
     private final OAuth2AuthorizedClientService oAuth2AuthorizedClientService;
     private final JwtReIssueService jwtReIssueService;
 
@@ -40,11 +40,11 @@ public class UserController {
 
         log.info("인증 테스트 실행");
 
-//        log.info("===== default OAuth2AuthorizedClientRepository 구현체 조회 =====");
-//        log.info(String.valueOf(oAuth2AuthorizedClientRepository.getClass()));
-//
-//        log.info("===== default OAuth2AuthorizedClientService 구현체 조회 =====");
-//        log.info(String.valueOf(oAuth2AuthorizedClientService.getClass()));
+        log.info("===== default OAuth2AuthorizedClientRepository 구현체 조회 =====");
+        log.info(String.valueOf(oAuth2AuthorizedClientRepository.getClass()));
+
+        log.info("===== default OAuth2AuthorizedClientService 구현체 조회 =====");
+        log.info(String.valueOf(oAuth2AuthorizedClientService.getClass()));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 //        log.info("===== SecurityContextHolder에서 Authentication.getPrincipal 조회 =====");
