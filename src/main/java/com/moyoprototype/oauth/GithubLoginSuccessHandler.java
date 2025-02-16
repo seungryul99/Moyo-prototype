@@ -3,7 +3,6 @@ package com.moyoprototype.oauth;
 import com.moyoprototype.common.redis.repository.RedisRepository;
 import com.moyoprototype.jwt.util.JwtProvider;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-
-import static com.moyoprototype.common.constant.MoyoPrototypeConstants.JWT_REFRESH_EXPIRES_MS;
 
 @Slf4j
 @Component
@@ -35,8 +32,8 @@ public class GithubLoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String jwtRefresh = jwtProvider.createJwtRefresh(userAppId);
         redisRepository.save(gitHubOAuth2User.getAppId(), jwtRefresh);
 
-        response.addHeader("Set-Cookie", "jwtRefresh=" + jwtRefresh + "; Path=/; Max-Age=600; SameSite=Lax; Domain=.cafehub.site; HttpOnly; Secure;");
-        response.sendRedirect("https://cafehub.site/test");
+        response.addHeader("Set-Cookie", "jwtRefresh=" + jwtRefresh + "; Path=/; Max-Age=600; SameSite=Lax; HttpOnly; Secure;");
+        response.sendRedirect("http://localhost:3000/test");
     }
 
 }

@@ -2,10 +2,8 @@ package com.moyoprototype.user.controller;
 
 import com.moyoprototype.oauth.GithubOAuth2User;
 import com.moyoprototype.user.service.JwtReIssueService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -47,8 +45,8 @@ public class UserController {
         log.info(String.valueOf(oAuth2AuthorizedClientService.getClass()));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        log.info("===== SecurityContextHolder에서 Authentication.getPrincipal 조회 =====");
-//        log.info(String.valueOf(auth.getPrincipal().getClass()));
+        log.info("===== SecurityContextHolder에서 Authentication.getPrincipal 조회 =====");
+        log.info(String.valueOf(auth.getPrincipal().getClass()));
 
         GithubOAuth2User userPrincipal = (GithubOAuth2User) auth.getPrincipal();
         log.info("===== SecurityContextHolder에서 Authentication.getPrincipal에 넣어둔 GithubOAuth2User 조회 =====");
@@ -57,10 +55,10 @@ public class UserController {
         log.info("userProfileImg : {}", userPrincipal.getProfileImgUrl());
 
 
-//        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(GITHUB_REGISTRATION_ID, userPrincipal.getName());
-//        log.info("===== OAuth2AuthorizedClient 조회 : {}  =====", oAuth2AuthorizedClient);
+        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(GITHUB_REGISTRATION_ID, userPrincipal.getName());
+        log.info("===== OAuth2AuthorizedClient 조회 : {}  =====", oAuth2AuthorizedClient);
 
-//        log.info("===== 현재 로그인 한 사용자의 OAuth2 Access Token 조회 : {} =====", oAuth2AuthorizedClient.getAccessToken().getTokenValue());
+        log.info("===== 현재 로그인 한 사용자의 OAuth2 Access Token 조회 : {} =====", oAuth2AuthorizedClient.getAccessToken().getTokenValue());
 
         return "OK";
     }
@@ -75,7 +73,7 @@ public class UserController {
         return ResponseEntity.status(200)
 
                 .header("Authorization", "Bearer " + reIssueTokens.get("access"))
-                .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Path=/; Max-Age=600; SameSite=Lax; Domain=.cafehub.site; HttpOnly; Secure;")
+                .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Path=/; Max-Age=600; SameSite=Lax; HttpOnly; Secure;")
                 .build();
     }
 

@@ -54,11 +54,15 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         // Authorization Header에서 실제 토큰 추출
         String accessToken = authorizationHeader.substring(7);
 
+        log.info("액세스 토큰 정상 추출 테스트 : {}", accessToken.substring(0,4));
+
         // 추출한 jwt AccessToken JWT Validator로 검증
         jwtValidator.validateJwtAccessToken(accessToken);
 
         String userAppId = jwtPayloadReader.getUserAppId(accessToken);
         GithubOAuth2User userDetails = userService.loadGithubUser(userAppId);
+
+        log.info("검증 완료");
 
         // 인증 객체 생성
         UsernamePasswordAuthenticationToken authentication =
@@ -67,6 +71,7 @@ public class JwtValidationFilter extends OncePerRequestFilter {
         // Spring Security의 SecurityContext에 인증 정보 설정
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
+        log.info("컨텍스트 홀더 세팅 완료 : {}", SecurityContextHolder.getContext().getAuthentication().isAuthenticated());
         // 다음 필터로 넘어감
         filterChain.doFilter(request,response);
     }

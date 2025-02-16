@@ -10,7 +10,7 @@ spring:
   # JPA
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
   # Redis
   data:
@@ -35,7 +35,7 @@ spring:
             client-secret : ${CLIENT_SECRET}
             scope:
               - read:user
-#              - user:follow
+              - user:follow
 # Log
 logging:
   level:
