@@ -2,13 +2,15 @@ package com.moyoprototype.pr_review_request.controller;
 
 import com.moyoprototype.common.model.ApiResponse;
 import com.moyoprototype.oauth.GithubOAuth2User;
+import com.moyoprototype.pr_review_request.dto.request.PrReviewRequestsRequestDto;
 import com.moyoprototype.pr_review_request.dto.response.PrReviewRequestDetailResponseDto;
 import com.moyoprototype.pr_review_request.dto.response.PrReviewRequestsResponseDto;
 import com.moyoprototype.pr_review_request.service.PrReviewRequestService;
-import com.moyoprototype.pr_review_request.dto.request.PrReviewRequestsRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +23,18 @@ public class PrReviewRequestController {
     private final PrReviewRequestService prReviewService;
 
     // 요청글 전체 조회.
-    @PostMapping
-    public ResponseEntity<ApiResponse<PrReviewRequestsResponseDto>> prReviewRequestList(@RequestBody PrReviewRequestsRequestDto requestDto) {
+    @GetMapping
+    public ResponseEntity<ApiResponse<PrReviewRequestsResponseDto>> prReviewRequestList(
+            @RequestParam(value = "status", defaultValue = "open") String status,
+            @RequestParam(value = "order", defaultValue = "latest_desc") String order,
+            @RequestParam(value = "position") String position,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
 
 //        GithubOAuth2User userPrincipal = (GithubOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        log.info("PR리뷰요청글 전체 조회 요청자 : {}", userPrincipal.getUsername());
+
+        PrReviewRequestsRequestDto requestDto = new PrReviewRequestsRequestDto(status, order, position, page, size);
 
         return ResponseEntity.ok(ApiResponse.success(prReviewService.getPrReviewRequests(requestDto)));
     }

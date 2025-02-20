@@ -21,15 +21,15 @@ public class PrReviewRequestsRequestDto {
         return "open".equalsIgnoreCase(status); // "open"이면 true, 아니면 false.
     }
 
-    /**
-     * 아래처럼 쿼리 파라미터가 많아서 컨트롤러 가독성을 높이기 위해 DTO화.
-     *
-     * public ResponseEntity<List<PrReviewRequestResponseDto>> prReviewRequestList(
-     *             @RequestParam(value = "status", defaultValue = "open") String status,
-     *             @RequestParam(value = "order", defaultValue = "latest_desc") String order,
-     *             @RequestParam(value = "position") String position,
-     *             @RequestParam(value = "page") int page,
-     *             @RequestParam(value = "size") int size
-     *     )
-     */
+
+//      // 아래처럼 쿼리 파라미터가 많아서 컨트롤러 가독성을 높이기 위해 DTO화.
+//
+//      public ResponseEntity<List<PrReviewRequestResponseDto>> prReviewRequestList(
+//                  @RequestParam(value = "status", defaultValue = "open") String status,
+//                  @RequestParam(value = "order", defaultValue = "latest_desc") String order,
+//                  @RequestParam(value = "position") String position,
+//                  @RequestParam(value = "page") int page,
+//                  @RequestParam(value = "size") int size
+//          )
+//
 }
