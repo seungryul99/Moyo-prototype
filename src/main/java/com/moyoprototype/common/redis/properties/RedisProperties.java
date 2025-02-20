@@ -11,5 +11,4 @@ public class RedisProperties {
 
     private final String host;
     private final Long port;
-    private final String password;
 }

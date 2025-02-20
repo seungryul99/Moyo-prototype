@@ -11,7 +11,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class GithubHttpClient {
+public class FollowHttpClient {
 
     private final RestClient restClient;
 

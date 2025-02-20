@@ -1,6 +1,6 @@
 package com.moyoprototype.follow.application;
 
-import com.moyoprototype.follow.infrastructure.GithubHttpClient;
+import com.moyoprototype.follow.infrastructure.FollowHttpClient;
 import com.moyoprototype.follow.infrastructure.dto.GithubUserResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class FollowService {
 
-    private final GithubHttpClient githubClient;
+    private final FollowHttpClient githubClient;
 
     // 나만 팔로잉 = 나의 팔로잉 목록 - 나의 팔로워 목록
     public Set<GithubUserResponse> getFollowingOnlyList(String accessToken) {

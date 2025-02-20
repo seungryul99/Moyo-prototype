@@ -75,8 +75,9 @@ public class OAuth2LoginSecurityConfig {
                  *    5. 우선은 failHandler는 구현하지 않음.
                  */
 
-
                 .oauth2Login(oauth2 -> oauth2
+                                // OAuth2AuthenticationFailureHandler -> 이것도 추가해줘야함, 인증 실패시 실행될 핸들러, 이건 로그인 자체가 실패
+//                                .failureHandler()
 
                         // 인증 후, 사용자의 OAuth2 클라이언트(예: 액세스 토큰, 리프레시 토큰 등)를 저장하고 관리
                         // 기본 구현체 : HttpSessionOAuth2AuthorizedClientRepository
@@ -102,6 +103,9 @@ public class OAuth2LoginSecurityConfig {
 //                                // OAuth2AuthorizationRequestRepository 이걸 커스텀 했으니 Resolver도 커스텀
 ////                                .authorizationRequestResolver(this.authorizationRequestResolver())
                         )
+                        
+                        
+
 
 
 //                        .redirectionEndpoint(redirection -> redirection
@@ -128,6 +132,8 @@ public class OAuth2LoginSecurityConfig {
 //                                .oidcUserService(this.oidcUserService())
                         )
                                 .successHandler(githubLoginSuccessHandler)
+                        //  UserInfo 실패 핸들러는 OAuth에서 사용자 리소스 받아오기 실패했을 때 실행하는 거임.
+//                                .failureHandler()
                 )
                 .cors((cors -> cors.configurationSource(corsConfigurationSource())))
 

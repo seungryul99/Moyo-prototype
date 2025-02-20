@@ -1,42 +1,18 @@
 spring:
 
-  # MySQL
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
-
   # JPA
   jpa:
     hibernate:
       ddl-auto: update
-
-  # Redis
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
-
-  # JWT
-  jwt:
-    secret: ${JWT_SECRET_KEY}
-
-
-  # Security
-
-  security:
-    oauth2:
-      client:
-        registration:
-          github:
-            client-id: ${CLIENT_ID}
-            client-secret : ${CLIENT_SECRET}
-            scope:
-              - read:user
-              - user:follow
 # Log
 logging:
   level:
     root: info
+    org.springframework.security: debug
+
+
+# P6spy
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
