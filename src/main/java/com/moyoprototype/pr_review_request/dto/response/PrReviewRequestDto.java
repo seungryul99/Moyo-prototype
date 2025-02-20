@@ -1,6 +1,5 @@
 package com.moyoprototype.pr_review_request.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
 import java.time.Duration;
@@ -9,30 +8,24 @@ import java.time.LocalDateTime;
 @Getter
 public class PrReviewRequestDto {
 
-    @JsonProperty("profileImageUrl")
-    private String profileImageUrl;
+    private final String profileImageUrl;
 
-    @JsonProperty("username")
-    private String username;
+    private final String username;
 
-    @JsonProperty("position")
-    private String position;
+    private final String position;
 
-    @JsonProperty("title")
-    private String title;
+    private final String title;
 
-    @JsonProperty("hitCount")
-    private int hitCount; // 이건 api 명세서에 빠진 내용임. 추가해야함.
+    private final int hitCount; // 이건 api 명세서에 빠진 내용임. 추가해야함.
 
-    @JsonProperty("since")
-    private String since; // 이건 자체적으로 계산.
+    private final String since; // 이건 자체적으로 계산.
 
-    public PrReviewRequestDto(String profileImageUrl, String username, String position, String title, int hitCount, LocalDateTime createdAt) {
+    public PrReviewRequestDto(String profileImageUrl, String username, String position, String title, Integer hitCount, LocalDateTime createdAt) {
         this.profileImageUrl = profileImageUrl;
         this.username = username;
         this.position = position;
         this.title = title;
-        this.hitCount = hitCount;
+        this.hitCount = hitCount != null ? hitCount : 0;
         this.since = calculateTimeAgo(createdAt);
     }
 

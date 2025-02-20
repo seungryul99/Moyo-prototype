@@ -14,8 +14,11 @@ public class PrReviewRequestsRequestDto {
     private int size = 20;
 
     // status를 boolean으로 변환.
-    public boolean getStatusAsBoolean() {
-        return "open".equalsIgnoreCase(status); // "open"이면 true, "closed"면 false.
+//    public Boolean getStatusAsBoolean() {
+//        return "open".equalsIgnoreCase(status); // "open"이면 true, "closed"면 false.
+//    }
+    public Boolean getStatus() {
+        return "open".equalsIgnoreCase(status); // "open"이면 true, 아니면 false.
     }
 
     /**

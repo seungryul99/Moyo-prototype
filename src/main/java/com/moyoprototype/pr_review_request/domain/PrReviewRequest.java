@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PrReviewRequest extends BaseTimeEntity {
 
-    // erd에 적힌 필드와 이름이 달라서 erd버리고 api명세대로 감. 뇌정지왔네 순간.
+    // erd에 적힌 필드와 이름이 달라서 erd버리고 api명세대로 감. viewCount? hitCount? 뇌정지왔네 순간.
 
     @Id
     @Column(name = "pr_review_request_id")
@@ -24,6 +24,7 @@ public class PrReviewRequest extends BaseTimeEntity {
     @Column(nullable = false)
     private String title;
 
+    @Lob
     @Column(nullable = false)
     private String content;
 
@@ -42,8 +43,8 @@ public class PrReviewRequest extends BaseTimeEntity {
     private int hitCount;
 
     @Column(nullable = false)
-//    private boolean isCompleted; // 접두사 is_ 들어가면 직렬화와 jpa 사용에 헷갈림.
-    private boolean status; // 마감 여부.
+//    private boolean isCompleted; // 접두사 is 들어가면 직렬화와 jpa 사용에 헷갈림, Boolean도 있지만 status로 통합.
+    private Boolean status; // 마감 여부.
 
     @Builder
     public PrReviewRequest(String title, String content, String prUrl, String position, int hitCount, boolean status) {
@@ -53,5 +54,10 @@ public class PrReviewRequest extends BaseTimeEntity {
         this.position = position;
         this.hitCount = hitCount;
         this.status = status;
+    }
+
+    public void increaseHitCount() {
+
+        this.hitCount++;
     }
 }

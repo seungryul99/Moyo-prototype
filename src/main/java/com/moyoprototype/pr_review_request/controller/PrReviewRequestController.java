@@ -2,6 +2,7 @@ package com.moyoprototype.pr_review_request.controller;
 
 import com.moyoprototype.common.model.ApiResponse;
 import com.moyoprototype.oauth.GithubOAuth2User;
+import com.moyoprototype.pr_review_request.dto.response.PrReviewRequestDetailResponseDto;
 import com.moyoprototype.pr_review_request.dto.response.PrReviewRequestsResponseDto;
 import com.moyoprototype.pr_review_request.service.PrReviewRequestService;
 import com.moyoprototype.pr_review_request.dto.request.PrReviewRequestsRequestDto;
@@ -30,14 +31,24 @@ public class PrReviewRequestController {
     }
 
     // 요청글 상세 조회.
-//    @GetMapping("/{pr-review-requestId}")
-//    public ResponseEntity<ApiResponse<PrReviewRequestDetailResponseDto>> prReviewRequestDetail(@PathVariable("pr-review-requestId") String requestId) {
-//
-//    }
+    @GetMapping("/{pr-review-requestId}")
+    public ResponseEntity<ApiResponse<PrReviewRequestDetailResponseDto>> prReviewRequestDetail(@PathVariable("pr-review-requestId") Long requestId) {
+
+        GithubOAuth2User userPrincipal = (GithubOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        log.info("PR리뷰요청글 상세 조회 요청자 : {}", userPrincipal.getUsername());
+
+        return ResponseEntity.ok(ApiResponse.success(prReviewService.getPrReviewRequestDetail(requestId, userPrincipal.getUsername())));
+    }
 
 //    // 요청 글 생성.
 //    @PostMapping("/")
 //    public ResponseEntity<?> create() {
+//
+//    }
+//
+//    // 요청 글 수정 폼.
+//    @GetMapping("/{pr-review-requestId}/form")
+//    public ResponseEntity<?> updateForm() {
 //
 //    }
 //

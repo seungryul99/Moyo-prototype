@@ -11,6 +11,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -27,7 +28,7 @@ public class QueryDslPrReviewRequestRepositoryImpl implements QueryDslPrReviewRe
         QPrReviewRequest qPrReviewRequest = QPrReviewRequest.prReviewRequest;
 
         var query = queryFactory.selectFrom(qPrReviewRequest)
-                .where(qPrReviewRequest.status.eq(requestDto.getStatusAsBoolean())
+                .where(qPrReviewRequest.status.eq(requestDto.getStatus())
                         .and(qPrReviewRequest.position.eq(requestDto.getPosition())));
 
         String order = requestDto.getOrder();
@@ -46,18 +47,39 @@ public class QueryDslPrReviewRequestRepositoryImpl implements QueryDslPrReviewRe
         int page = requestDto.getPage();
         int size = requestDto.getSize();
 
-        // 슬라이스 처리.
+        // 슬라이스 처리 - 직접 생성자 호출(컴파일 타임에 에러 감지)
         List<PrReviewRequestDto> prReviewRequests = query.offset(page * size)
-                .limit(size + 1) // 마지막 페이지 여부를 확인하기 위해 하나 더 가져옴.
-                .select(Projections.constructor(PrReviewRequestDto.class,
-                        qPrReviewRequest.user.profileImgUrl.as("profileImageUrl"),
-                        qPrReviewRequest.user.name.as("username"),
+                .limit(size + 1)
+                .select(qPrReviewRequest.user.profileImgUrl,
+                        qPrReviewRequest.user.name,
                         qPrReviewRequest.position,
                         qPrReviewRequest.title,
                         qPrReviewRequest.hitCount,
-                        qPrReviewRequest.createdAt
-                        ))
-                .fetch();
+                        qPrReviewRequest.createdAt)
+                .fetch()
+                .stream()
+                .map(tuple -> new PrReviewRequestDto(
+                        tuple.get(0, String.class),
+                        tuple.get(1, String.class),
+                        tuple.get(2, String.class),
+                        tuple.get(3, String.class),
+                        tuple.get(4, Integer.class),
+                        tuple.get(5, LocalDateTime.class)
+                ))
+                .toList();
+
+//        // 슬라이스 처리 - 리플렉션 사용(런타임)
+//        List<PrReviewRequestDto> prReviewRequests = query.offset(page * size)
+//                .limit(size + 1) // 마지막 페이지 여부를 확인하기 위해 하나 더 가져옴.
+//                .select(Projections.constructor(PrReviewRequestDto.class,
+//                        qPrReviewRequest.user.profileImgUrl.as("profileImageUrl"),
+//                        qPrReviewRequest.user.name.as("username"),
+//                        qPrReviewRequest.position,
+//                        qPrReviewRequest.title,
+//                        qPrReviewRequest.hitCount,
+//                        qPrReviewRequest.createdAt
+//                        ))
+//                .fetch();
 
         // 마지막인지 확인.
         boolean hasNext = prReviewRequests.size() > size;
