@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/auth/pr-review-requests")
+@RequestMapping("/pr-review-requests")
 @RequiredArgsConstructor
 public class PrReviewRequestController {
 
     private final PrReviewRequestService prReviewService;
 
     // 요청글 전체 조회.
-    @GetMapping("/")
-    public ResponseEntity<ApiResponse<PrReviewRequestsResponseDto>> prReviewRequestList(PrReviewRequestsRequestDto requestDto) {
+    @PostMapping
+    public ResponseEntity<ApiResponse<PrReviewRequestsResponseDto>> prReviewRequestList(@RequestBody PrReviewRequestsRequestDto requestDto) {
 
-        GithubOAuth2User userPrincipal = (GithubOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        log.info("PR리뷰요청글 전체 조회 요청자 : {}", userPrincipal.getUsername());
+//        GithubOAuth2User userPrincipal = (GithubOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        log.info("PR리뷰요청글 전체 조회 요청자 : {}", userPrincipal.getUsername());
 
         return ResponseEntity.ok(ApiResponse.success(prReviewService.getPrReviewRequests(requestDto)));
     }

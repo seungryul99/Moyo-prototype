@@ -7,11 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public class PrReviewRequestsRequestDto {
 
-    private String status = "open";
-    private String order = "latest_desc";
+    private String status;
+    private String order;
     private String position;
-    private int page = 1;
-    private int size = 20;
+    private int page;
+    private int size;
 
     // status를 boolean으로 변환.
 //    public Boolean getStatusAsBoolean() {
