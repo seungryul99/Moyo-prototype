@@ -3,6 +3,7 @@ package com.moyoprototype.pr_review_request.repository;
 import com.moyoprototype.pr_review_request.domain.QPrReviewRequest;
 import com.moyoprototype.pr_review_request.dto.request.PrReviewRequestsRequestDto;
 import com.moyoprototype.pr_review_request.dto.response.PrReviewRequestDto;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +28,19 @@ public class QueryDslPrReviewRequestRepositoryImpl implements QueryDslPrReviewRe
 
         QPrReviewRequest qPrReviewRequest = QPrReviewRequest.prReviewRequest;
 
-        var query = queryFactory.selectFrom(qPrReviewRequest);
-//                .where(qPrReviewRequest.status.eq(requestDto.getStatus())
-//                        .and(qPrReviewRequest.position.eq(requestDto.getPosition())));
+        // BooleanBuilder를 사용하여 동적으로 조건을 추가
+        BooleanBuilder whereClause = new BooleanBuilder();
+
+        if (requestDto.getStatus() != null) {
+            whereClause.and(qPrReviewRequest.status.eq(requestDto.getStatus()));
+        }
+        if (requestDto.getPosition() != null) {
+            whereClause.and(qPrReviewRequest.position.eq(requestDto.getPosition()));
+        }
+
+        // QueryDSL Query 생성
+        var query = queryFactory.selectFrom(qPrReviewRequest)
+                .where(whereClause); // 조건 추가
 
         String order = requestDto.getOrder();
 
@@ -50,23 +61,14 @@ public class QueryDslPrReviewRequestRepositoryImpl implements QueryDslPrReviewRe
         // 슬라이스 처리 - 직접 생성자 호출(컴파일 타임에 에러 감지)
         List<PrReviewRequestDto> prReviewRequests = query.offset(page * size)
                 .limit(size + 1)
-                .select(qPrReviewRequest.user.profileImgUrl,
+                .select(Projections.constructor(PrReviewRequestDto.class,
+                        qPrReviewRequest.user.profileImgUrl,
                         qPrReviewRequest.user.name,
                         qPrReviewRequest.position,
                         qPrReviewRequest.title,
                         qPrReviewRequest.hitCount,
-                        qPrReviewRequest.createdAt)
-                .fetch()
-                .stream()
-                .map(tuple -> new PrReviewRequestDto(
-                        tuple.get(0, String.class),
-                        tuple.get(1, String.class),
-                        tuple.get(2, String.class),
-                        tuple.get(3, String.class),
-                        tuple.get(4, Integer.class),
-                        tuple.get(5, LocalDateTime.class)
-                ))
-                .toList();
+                        qPrReviewRequest.createdAt))
+                .fetch();
 
 //        // 슬라이스 처리 - 리플렉션 사용(런타임)
 //        List<PrReviewRequestDto> prReviewRequests = query.offset(page * size)
@@ -84,7 +86,8 @@ public class QueryDslPrReviewRequestRepositoryImpl implements QueryDslPrReviewRe
         // 마지막인지 확인.
         boolean hasNext = prReviewRequests.size() > size;
         if (hasNext) {
-            prReviewRequests.removeLast();
+//            prReviewRequests.removeLast();
+            prReviewRequests.remove(prReviewRequests.size() - 1); // 마지막 요소 제거
         }
 
         return new SliceImpl<>(prReviewRequests, PageRequest.of(page, size), hasNext);
