@@ -58,7 +58,7 @@ public class OAuth2LoginSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/reissue/token","/api/health","/error/**","/pr-review-requests").permitAll()
+                        .requestMatchers("/api/reissue/token","/api/health","/error/**","/pr-review-requests/**").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtExceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
