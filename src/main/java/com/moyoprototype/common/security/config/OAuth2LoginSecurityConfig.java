@@ -8,17 +8,15 @@ import com.moyoprototype.oauth.GithubOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.List;
+import static org.springframework.security.config.Customizer.*;
 
 
 @Configuration
@@ -32,33 +30,21 @@ public class OAuth2LoginSecurityConfig {
     private final JwtExceptionHandleFilter jwtExceptionHandleFilter;
     private final ServerLoadBalancingLoggingFilter serverLoadBalancingLoggingFilter;
 
-
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-        configuration.setAllowedMethods(List.of("GET","POST","PATCH","DELETE","OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/reissue/token","/api/health","/error/**","/pr-review-requests").permitAll()
+                .cors(withDefaults())
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
+
+        http
+               .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/reissue/token","/api/health","/error/**","/pr-review-requests","/").permitAll()
                         .anyRequest().authenticated()
                 ).addFilterBefore(jwtExceptionHandleFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtValidationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -91,7 +77,7 @@ public class OAuth2LoginSecurityConfig {
                         .authorizationEndpoint(authorization -> authorization
 //
 //                                // 사용자가 로그인 하기 버튼을 누르면 해당 경로로 들어와서 LoginRedirectFilter 동작 커스텀, registrationId 전까지가 Uri임 /github 안붙여야됨
-                                .baseUri("/api/users/login")
+                                .baseUri("/auth/login")
 //
 //                                // 보통 csrf 공격 방어등을 위해서 요청을 서버 세션에 저장해두고 state = 랜덤 UUID 같은 걸 붙여서 관리함
 //                                // 추후 요청이 돌아오면 해당 state 값과 비교하는데 여기서도 다중 서버 세션 불일치 문제가 발생할 수 있음.
@@ -135,7 +121,7 @@ public class OAuth2LoginSecurityConfig {
                         //  UserInfo 실패 핸들러는 OAuth에서 사용자 리소스 받아오기 실패했을 때 실행하는 거임.
 //                                .failureHandler()
                 )
-                .cors((cors -> cors.configurationSource(corsConfigurationSource())))
+
 
         ;
         return http.build();

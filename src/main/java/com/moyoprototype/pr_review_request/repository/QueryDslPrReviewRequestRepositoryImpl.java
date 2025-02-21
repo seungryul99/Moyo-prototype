@@ -27,9 +27,9 @@ public class QueryDslPrReviewRequestRepositoryImpl implements QueryDslPrReviewRe
 
         QPrReviewRequest qPrReviewRequest = QPrReviewRequest.prReviewRequest;
 
-        var query = queryFactory.selectFrom(qPrReviewRequest)
-                .where(qPrReviewRequest.status.eq(requestDto.getStatus())
-                        .and(qPrReviewRequest.position.eq(requestDto.getPosition())));
+        var query = queryFactory.selectFrom(qPrReviewRequest);
+//                .where(qPrReviewRequest.status.eq(requestDto.getStatus())
+//                        .and(qPrReviewRequest.position.eq(requestDto.getPosition())));
 
         String order = requestDto.getOrder();
 

@@ -7,7 +7,6 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
-
   # Redis
   data:
     redis:
@@ -17,6 +16,9 @@ spring:
   # JWT
   jwt:
     secret: ${JWT_SECRET_KEY}
+
+  cors:
+    allow-origin: ${ALLOW_ORIGIN:http://localhost:3000}
 
   # Security
 
@@ -31,3 +33,4 @@ spring:
               - read:user
               - user:follow
             redirect-uri: ${REDIRECT_URI}
+
