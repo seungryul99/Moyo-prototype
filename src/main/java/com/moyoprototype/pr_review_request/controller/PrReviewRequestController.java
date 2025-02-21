@@ -21,11 +21,18 @@ public class PrReviewRequestController {
     private final PrReviewRequestService prReviewService;
 
     // 요청글 전체 조회.
-    @PostMapping
-    public ResponseEntity<ApiResponse<PrReviewRequestsResponseDto>> prReviewRequestList(@RequestBody PrReviewRequestsRequestDto requestDto) {
+    @GetMapping
+    public ResponseEntity<ApiResponse<PrReviewRequestsResponseDto>> prReviewRequestList(
+            @RequestParam(value = "status", defaultValue = "open") String status,
+            @RequestParam(value = "order", defaultValue = "latest_desc") String order,
+            @RequestParam(value = "position") String position,
+            @RequestParam(value = "page") int page,
+            @RequestParam(value = "size") int size) {
 
 //        GithubOAuth2User userPrincipal = (GithubOAuth2User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 //        log.info("PR리뷰요청글 전체 조회 요청자 : {}", userPrincipal.getUsername());
+
+        PrReviewRequestsRequestDto requestDto = new PrReviewRequestsRequestDto(status, order, position, page, size);
 
         return ResponseEntity.ok(ApiResponse.success(prReviewService.getPrReviewRequests(requestDto)));
     }
