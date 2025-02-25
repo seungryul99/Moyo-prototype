@@ -37,50 +37,44 @@ public class PrReviewRequestService {
     }
 
     public PrReviewRequestDetailResponseDto getPrReviewRequestDetail(Long requestId, String username) {
-
-        Optional<PrReviewRequest> prReviewRequestDetail = prReviewRequestRepository.findById(requestId);
-
-        // 잘못된 요청글 id라면 예외 발생.
-//        if (prReviewRequestDetail.isEmpty());
+        // 1. PR 리뷰 요청글 조회 (없으면 예외 발생)
+        PrReviewRequest prReviewRequest = prReviewRequestRepository.findById(requestId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 PR 리뷰 요청글입니다: " + requestId));
 
         boolean isWriter = false;
 
+        // 2. 로그인한 사용자인 경우만 조회수 증가 로직 수행
         if (username != null) {
-            Optional<User> userOptional = userRepository.findByName(username);
+            User user = userRepository.findByName(username)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다: " + username));
 
-            Long userId = userOptional.map(User::getId).orElse(null);
+            // 3. 조회 기록이 없다면 조회수 증가 및 기록 추가.
+            boolean hasViewed = prReviewRequestViewRepository.existsByPrReviewRequestIdAndUserId(requestId, user.getId());
 
-            // 유저네임이 있다면 유저 Id는 무조건 존재함. 아래 로직은 필요한 예외가 있나?
-            if (userId != null) {
-                boolean hasViewed = prReviewRequestViewRepository.existsByPrReviewRequestIdAndUserId(requestId, userId);
+            if (!hasViewed) {
+                prReviewRequest.increaseHitCount();
 
-                // 회원 1명당 조회수 1개만 증가 가능.
-                if (!hasViewed) {
-                    prReviewRequestDetail.get().increaseHitCount();
+                PrReviewRequestView prReviewRequestView = PrReviewRequestView.builder()
+                        .user(user)
+                        .prReviewRequest(prReviewRequest)
+                        .build();
 
-                    PrReviewRequestView prReviewRequestView = PrReviewRequestView.builder()
-                            .user(userOptional.get())
-                            .prReviewRequest(prReviewRequestDetail.get())
-                            .build();
-                }
-
-                // 현재 사용자가 작성자인지 판별.
-                if (prReviewRequestDetail.get().getUser().getId().equals(userId)) {
-                    isWriter = true;
-                }
+                prReviewRequestViewRepository.save(prReviewRequestView); // 저장 로직 추가.
             }
+
+            // 4. 현재 사용자가 작성자인지 판별.
+            isWriter = prReviewRequest.getUser().equals(user);
         }
 
-        PrReviewRequest prReviewRequest = prReviewRequestDetail.get();
-
+        // 5. DTO 변환 후 반환
         return new PrReviewRequestDetailResponseDto(
                 prReviewRequest.getStatus() ? "open" : "closed",
                 isWriter,
                 prReviewRequest.getUser().getProfileImgUrl(),
-                prReviewRequest.getUser().getName(), // username임.
+                prReviewRequest.getUser().getName(),
                 prReviewRequest.getPosition(),
                 prReviewRequest.getTitle(),
-                prReviewRequest.getHitCount(), // 위의 증가 로직이 반영된 결과를 가져가야함.
+                prReviewRequest.getHitCount(),
                 prReviewRequest.getCreatedAt().toString(),
                 prReviewRequest.getContent(),
                 prReviewRequest.getPrUrl()
