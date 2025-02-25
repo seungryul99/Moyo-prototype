@@ -2,16 +2,17 @@ package com.moyoprototype.user.controller;
 
 import com.moyoprototype.oauth.GithubOAuth2User;
 import com.moyoprototype.user.service.JwtReIssueService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizedClientRepository;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -23,6 +24,7 @@ import static com.moyoprototype.common.constant.MoyoPrototypeConstants.GITHUB_RE
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
+
 
     @GetMapping("/health")
     public ResponseEntity<?> healthCheck(){
@@ -36,7 +38,15 @@ public class UserController {
     private final JwtReIssueService jwtReIssueService;
 
     @GetMapping("/auth/test")
-    public String test(){
+    public String test(Authentication authentication, @AuthenticationPrincipal GithubOAuth2User githubOAuth2User){
+
+//        OAuth2AuthenticationToken authenticationToken = (OAuth2AuthenticationToken) authentication;
+//        OAuth2User oAuth2User = authenticationToken.getPrincipal();
+//        GithubOAuth2User oAuth2User1 = (GithubOAuth2User)oAuth2User;
+//
+//        log.info("Authentication 으로 로그 찍어보기 : {}", oAuth2User1.getUsername());
+
+        log.info("@AuthenticationPrincipal로 로그 찍어보기 : {} ", githubOAuth2User.getUsername());
 
         log.info("인증 테스트 실행");
 
@@ -47,8 +57,8 @@ public class UserController {
         log.info(String.valueOf(oAuth2AuthorizedClientService.getClass()));
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        log.info("===== SecurityContextHolder에서 Authentication.getPrincipal 조회 =====");
-//        log.info(String.valueOf(auth.getPrincipal().getClass()));
+        log.info("===== SecurityContextHolder에서 Authentication.getPrincipal 조회 =====");
+        log.info(String.valueOf(auth.getPrincipal().getClass()));
 
         GithubOAuth2User userPrincipal = (GithubOAuth2User) auth.getPrincipal();
         log.info("===== SecurityContextHolder에서 Authentication.getPrincipal에 넣어둔 GithubOAuth2User 조회 =====");
@@ -57,8 +67,8 @@ public class UserController {
         log.info("userProfileImg : {}", userPrincipal.getProfileImgUrl());
 
 
-//        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(GITHUB_REGISTRATION_ID, userPrincipal.getName());
-//        log.info("===== OAuth2AuthorizedClient 조회 : {}  =====", oAuth2AuthorizedClient);
+        OAuth2AuthorizedClient oAuth2AuthorizedClient = oAuth2AuthorizedClientService.loadAuthorizedClient(GITHUB_REGISTRATION_ID, userPrincipal.getName());
+        log.info("===== OAuth2AuthorizedClient 조회 : {}  =====", oAuth2AuthorizedClient);
 
 //        log.info("===== 현재 로그인 한 사용자의 OAuth2 Access Token 조회 : {} =====", oAuth2AuthorizedClient.getAccessToken().getTokenValue());
 
@@ -75,7 +85,7 @@ public class UserController {
         return ResponseEntity.status(200)
 
                 .header("Authorization", "Bearer " + reIssueTokens.get("access"))
-                .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Path=/; Max-Age=600; SameSite=Lax; Domain=.cafehub.site; HttpOnly; Secure;")
+                .header("Set-Cookie","jwtRefresh=" + reIssueTokens.get("refresh") + "; Path=/; Max-Age=600; SameSite=Lax; HttpOnly; Secure;")
                 .build();
     }
 
